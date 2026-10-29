@@ -7,7 +7,7 @@ upload Arduino sketches without the IDE and without touching `~/.arduino15`. Cor
 pinned libraries and the sketchbook live in this folder; build output goes to idisk03. No sudo, no system packages.
 The launcher never shadows `arduino-cli`.
 
-Status: **ready** (doctor 22 ok, examples 15/15, templates 12/12 compile, smoke 26/26, dry-run 45/45, 2026-10-29). Launcher: `./arduino-box`.
+Status: **ready** (doctor 22 ok, examples 17/17, templates 14/14 compile, smoke 28/28, dry-run 45/45, 2026-10-29). Launcher: `./arduino-box`.
 
 ## What's included
 
@@ -115,6 +115,8 @@ sections, strings, flash/RAM sizes) or a host unit test on the PC. Radio, USB an
 | `stm32_hw_timer` | blackpill, weact_g431, weact_h562, weact_h743 | HardwareTimer 1 kHz interrupt, chip UID, HAL tick | code at 0x08000000, timer/IRQ symbols |
 | `neopixel_status` | esp32s3, esp32c3, pico, nicenano | WS2812 status LED (Adafruit NeoPixel), pin per board | library symbols |
 | `avr_low_power` | nano | power-down sleep, watchdog wake, wear-levelled EEPROM counter | WDT vector, fits 30720/2048 B |
+| `rust_staticlib` | pico, blackpill | `no_std` Rust (CRC-32, fixed-point EMA) built by 32_17_embedded_rust, linked as a precompiled library | `cargo test` on the host + Rust symbols in both ELFs |
+| `zig_staticlib` | pico, blackpill | freestanding Zig (isqrt, ADC scaling) built by 32_24_microzig, linked as a precompiled library | `zig test` on the host + Zig symbols in both ELFs |
 
 Artifacts checked: `.hex` (Nano), `.merged.bin` (ESP32), `.uf2` (Pico, Pico 2), `.bin` (STM32), `.zip` (nRF52 DFU).
 
@@ -135,6 +137,21 @@ Templates (`./arduino-box new <kind> <name> [--dir D]`; the name must be a C ide
 | `serial_cli` | nano | command table shell on Serial (`help`, `led`, `uptime`, `echo`) |
 | `wifi_esp32` | esp32c3 | Wi-Fi station with reconnect + `GET /status` JSON (ArduinoJson); `secrets.h` gitignored |
 | `low_power_avr` | nano | power-down sleep, wake on INT0 or watchdog |
+| `rust_staticlib` | pico (`build.sh` also: blackpill, weact_g431, nicenano, weact_h743) | sketch + `rust/` staticlib; `arduino-box run "$PWD/build.sh" pico` builds the Rust part with 32_17_embedded_rust and compiles |
+| `zig_staticlib` | blackpill (same boards) | sketch + `zig/` library (table interpolation); `build.sh` builds it with 32_24_microzig and compiles |
+
+### Rust, Zig and BEAM
+
+The Arduino cores compile C/C++ only. What works for real is linking a Rust or Zig static library into a sketch
+as a *precompiled library* (`precompiled=true`, `ldflags=-l<name>`, archive in `src/<build.mcu>/`): the examples and
+templates above. The toolchains are not installed here; they are reached in 32_17_embedded_rust (`$BOX_EMBEDDED_RUST`)
+and 32_24_microzig (`$BOX_MICROZIG`), else the sibling folders; without them the Rust/Zig examples exit 3 (skip)
+and the smoke test prints `skip`. Limits found: the C header must not sit next to the `.ino` (it then hides the
+library and the link fails); STM32duino's FPU folder name is `-mfpu=fpv4-sp-d16--mfloat-abi=hard`, so the archives
+go into plain `src/cortex-m4/`.
+- Rust: supported as a linked static library (above); a Rust `main`, embassy or esp-hal firmware does not fit an Arduino core: use 32_17_embedded_rust / 32_22_rust_next.
+- Zig: supported as a linked static library (above); MicroZig firmware has its own HAL and startup: use 32_24_microzig.
+- BEAM: not supported: AtomVM is a whole firmware image (VM + packed .avm), not something an Arduino sketch can link or host; use 32_29_atomvm.
 
 ## Configuration and environment variables
 
@@ -195,8 +212,8 @@ tests/test_smoke.sh            # cli + dirs + cores + libraries + every template
 tests/test_dry_run.sh          # every command in --dry-run + shellcheck + py_compile
 ```
 
-Last known (2026-10-29): doctor 22 ok / 0 warn / 0 fail; examples 15/15 (47 builds + 2 host test programs);
-smoke 26/26 (12 templates); dry-run 45/45. A fresh clone passed bootstrap, install, doctor and `test --all`.
+Last known (2026-10-29): doctor 22 ok / 0 warn / 0 fail; examples 17/17 (51 builds + 2 C++ host test programs,
+cargo test, zig test); smoke 28/28 (14 templates); dry-run 45/45. A fresh clone passed bootstrap, install, doctor and `test --all`.
 
 ## Troubleshooting
 
@@ -236,7 +253,7 @@ Each script has a `[scripts.*]` descriptor in `.box.toml` (`box scripts show 32_
 | `lib/arduino.bash`, `lib/arduino_cores.py` | this tool's hooks and extra commands; core pin/size helper |
 | `lib/elf_check.py` | `elf` command and example checks: machine, sections, symbols, strings, sizes of a built ELF (pyelftools) |
 | `pixi.toml`, `pixi.lock` | host-side env: g++, make, adafruit-nrfutil, pyelftools |
-| `examples/common.sh`, `examples/*/example.sh` | shared example code (compile, artifact and ELF checks) and the 15 examples |
+| `examples/common.sh`, `examples/*/example.sh` | shared example code (compile, artifact and ELF checks, sibling tools, precompiled libraries) and the 17 examples |
 | `tests/test_smoke.sh`, `tests/test_dry_run.sh`, `tests/testlib.sh` | smoke test, dry-run/shellcheck test, shared test helpers |
 | `native/` | written by `./arduino-box native`; regenerate, do not edit |
 

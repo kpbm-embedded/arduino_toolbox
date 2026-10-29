@@ -53,3 +53,20 @@
 - `.gitignore` made strict (install/, cache/, .pixi/, .bin/, native/, user/, build output, generated config); git repo
   created (`main`).
 - Results: doctor 22 ok / 0 warn / 0 fail; examples 15/15; smoke 26/26 (12 templates); dry-run 45/45 (shellcheck, py_compile).
+
+## 2026-10-29: Rust, Zig, BEAM (addendum)
+- Checked what Arduino cores can take: C/C++ only, but a static library linked as a precompiled Arduino library
+  (`precompiled=true`, `ldflags`, `src/<build.mcu>/lib<name>.a`) works on arduino-pico and STM32duino (both pass
+  `compiler.libraries.ldflags` inside the link group).
+- Added examples `rust_staticlib` (no_std crate, `cargo test` on the host) and `zig_staticlib` (`zig test` on the host),
+  for pico (thumbv6m / cortex_m0plus) and blackpill (thumbv7em-hf / cortex_m4); templates `rust_staticlib` and
+  `zig_staticlib` with a `build.sh`. Toolchains are reached, not installed: `$BOX_EMBEDDED_RUST` / `$BOX_MICROZIG`
+  or the sibling folders 32_17_embedded_rust / 32_24_microzig; exit 3 (skip) when missing. `examples/common.sh`:
+  `sibling_tool`, `precompiled_lib`.
+- Problems found: with the C header next to the `.ino`, STM32duino found it through `-I<sketch>` and never picked the
+  library, so the link failed with undefined references (headers now in `rust/include`, `zig/include`). arduino-cli
+  looks for the STM32 archive in `cortex-m4/-mfpu=fpv4-sp-d16--mfloat-abi=hard` (the board's fpu property includes the
+  flag), then `cortex-m4/`: archives go to `cortex-m4/`. Zig is built with `-fno-compiler-rt`; libgcc provides
+  `__aeabi_lmul` / `__aeabi_uldivmod`.
+- BEAM (AtomVM): not supported: it is a whole firmware (VM + .avm), nothing a sketch can link; see 32_29_atomvm.
+- Results: examples 17/17; smoke 28/28 (14 templates); dry-run 45/45; doctor 22 ok.

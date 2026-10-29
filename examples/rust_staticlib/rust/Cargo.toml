@@ -1,0 +1,18 @@
+# no_std Rust static library linked into an Arduino sketch (examples/rust_staticlib).
+# Built with the pinned toolchain of 32_17_embedded_rust (rust-box cargo); no dependencies.
+[package]
+name = "box_rust_dsp"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["staticlib"]
+path = "src/lib.rs"
+
+[profile.release]
+opt-level = "s"
+panic = "abort"
+lto = true
+codegen-units = 1
+debug = true

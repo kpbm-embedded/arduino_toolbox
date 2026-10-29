@@ -49,7 +49,7 @@ check plan-nrf    'adafruit-nrfutil dfu serial'            "$Q" plan nicenano bl
 check plan-pico2  'RP2350'                                 "$Q" plan pico2 blink
 check new-kinds   'freertos_esp32'                         bash -c "'$Q' new 2>&1 || true"
 check cli         '\+ arduino-cli --config-file .* version' "$Q" --dry-run cli version
-mapfile -t scripts < <(cd "$HERE" && ls arduino-box lib/*.bash tests/*.sh examples/common.sh examples/*/example.sh)
+mapfile -t scripts < <(cd "$HERE" && ls arduino-box lib/*.bash tests/*.sh examples/common.sh examples/*/example.sh templates/*/build.sh)
 check_shellcheck "${scripts[@]}"
 check_py_compile lib/arduino_cores.py lib/elf_check.py
 finish dry-run

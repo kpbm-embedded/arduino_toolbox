@@ -20,6 +20,21 @@ artifact() { # board -> the main firmware file arduino-cli writes for it
     *) echo "$build_path/$SKETCH.ino.bin" ;;
   esac
 }
+sibling_tool() { # ENV_VAR FOLDER LAUNCHER -> path of another Box tool's launcher ($ENV_VAR, else ../FOLDER), or nothing
+  local d=${!1:-}
+  if [[ -n "$d" && -x "$d/$3" ]]; then echo "$d/$3"; return 0; fi
+  if [[ -x "$BOXT_ROOT/../$2/$3" ]]; then (cd -P "$BOXT_ROOT/../$2" && echo "$PWD/$3"); fi
+}
+precompiled_lib() { # name header archive-dir -> Arduino library folder $EX_OUT/libraries/<name> (precompiled=true)
+  # archive-dir holds <mcu>[/<fpu>-<float-abi>]/lib<name>.a, the folders arduino-cli looks for (build.mcu etc.)
+  local name=$1 header=$2 archives=$3 lib="${EX_OUT:?}/libraries/$1"
+  mkdir -p "$lib/src"
+  cp "$header" "$lib/src/"
+  cp -r "$archives"/. "$lib/src/"
+  printf 'name=%s\nversion=0.1.0\nauthor=Box\nmaintainer=Box\nsentence=precompiled %s\nparagraph=built by example.sh\ncategory=Other\nurl=https://example.com\narchitectures=*\nprecompiled=true\nldflags=-l%s\nincludes=%s\n' \
+    "$name" "$name" "$name" "$(basename "$header")" >"$lib/library.properties"
+  echo "$lib"
+}
 elf_of() { echo "${BOXT_BUILD:?}/sketches/$SKETCH/$1/$SKETCH.ino.elf"; }   # board -> built ELF
 ex_elf() { # board elf_check-args...: section/symbol/arch checks on the board's ELF (lib/elf_check.py)
   local board=$1; shift

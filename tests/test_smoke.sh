@@ -30,7 +30,8 @@ if "$Q" new sketch "$sketch" --dir "$TEST_TMP" >/dev/null 2>&1; then
     else bad "template for $board: $(tail -3 <<<"$output")"; fi
   done
 else bad "new sketch"; fi
-# every template: kind, board, how to build it (sketch = the folder; library = its examples/basic)
+# every template: kind, board, how to build it (sketch = the folder; library = its examples/basic;
+# build.sh = the template's own script, which reaches 32_17_embedded_rust / 32_24_microzig)
 template_table="multi_file pico sketch
 library nano library
 host_tested nano sketch+host
@@ -41,7 +42,9 @@ dual_core_rp2040 pico2 sketch
 stm32_timer weact_g431 sketch
 serial_cli nano sketch
 wifi_esp32 esp32c3 sketch
-low_power_avr nano sketch"
+low_power_avr nano sketch
+rust_staticlib pico build.sh
+zig_staticlib blackpill build.sh"
 for kind in $(cd "$HERE/templates" && ls); do
   [[ "$kind" == sketch ]] || grep -q "^$kind " <<<"$template_table" || bad "template $kind has no row in test_smoke.sh"
 done
@@ -49,6 +52,13 @@ while read -r kind board how; do
   name="t_$kind"
   if ! "$Q" new "$kind" "$name" --dir "$TEST_TMP" >/dev/null 2>&1; then bad "new $kind"; continue; fi
   if grep -rq '@NAME' "$TEST_TMP/$name" || find "$TEST_TMP/$name" -name '*__name__*' | grep -q .; then bad "template $kind: placeholder left"; continue; fi
+  if [[ "$how" == build.sh ]]; then   # Rust/Zig part built with another Box tool: exit 3 = that tool is missing
+    output=$("$Q" run "$TEST_TMP/$name/build.sh" "$board" 2>&1); rc=$?
+    if [[ "$rc" -eq 3 ]]; then printf 'skip  template %s: %s\n' "$kind" "$(grep -m1 '^skip' <<<"$output")"
+    elif [[ "$rc" -eq 0 ]] && grep -qE 'Sketch uses [0-9]+ bytes' <<<"$output"; then ok "template $kind (build.sh) compiles for $board"
+    else bad "template $kind build.sh $board: $(tail -3 <<<"$output")"; fi
+    continue
+  fi
   compile_args=("$TEST_TMP/$name" "$board")
   if [[ "$how" == library ]]; then compile_args=("$TEST_TMP/$name/examples/basic" "$board" --library "$TEST_TMP/$name"); fi
   if output=$("$Q" compile "${compile_args[@]}" 2>&1) && grep -qE 'Sketch uses [0-9]+ bytes' <<<"$output"; then ok "template $kind compiles for $board"
