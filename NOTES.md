@@ -70,3 +70,7 @@
   `__aeabi_lmul` / `__aeabi_uldivmod`.
 - BEAM (AtomVM): not supported: it is a whole firmware (VM + .avm), nothing a sketch can link; see 32_29_atomvm.
 - Results: examples 17/17; smoke 28/28 (14 templates); dry-run 45/45; doctor 22 ok.
+
+## 2026-10-29: Bend instead of BEAM (brief correction)
+- The third language is Bend 2, not BEAM: README section renamed, the AtomVM line replaced by a Bend line (no MCU target:
+  Bend emits hosted POSIX C). No BEAM/AtomVM files had been added here. GitHub repo name: `arduino_toolbox`.

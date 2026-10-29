@@ -140,7 +140,7 @@ Templates (`./arduino-box new <kind> <name> [--dir D]`; the name must be a C ide
 | `rust_staticlib` | pico (`build.sh` also: blackpill, weact_g431, nicenano, weact_h743) | sketch + `rust/` staticlib; `arduino-box run "$PWD/build.sh" pico` builds the Rust part with 32_17_embedded_rust and compiles |
 | `zig_staticlib` | blackpill (same boards) | sketch + `zig/` library (table interpolation); `build.sh` builds it with 32_24_microzig and compiles |
 
-### Rust, Zig and BEAM
+### Rust, Zig and Bend
 
 The Arduino cores compile C/C++ only. What works for real is linking a Rust or Zig static library into a sketch
 as a *precompiled library* (`precompiled=true`, `ldflags=-l<name>`, archive in `src/<build.mcu>/`): the examples and
@@ -151,7 +151,7 @@ library and the link fails); STM32duino's FPU folder name is `-mfpu=fpv4-sp-d16-
 go into plain `src/cortex-m4/`.
 - Rust: supported as a linked static library (above); a Rust `main`, embassy or esp-hal firmware does not fit an Arduino core: use 32_17_embedded_rust / 32_22_rust_next.
 - Zig: supported as a linked static library (above); MicroZig firmware has its own HAL and startup: use 32_24_microzig.
-- BEAM: not supported: AtomVM is a whole firmware image (VM + packed .avm), not something an Arduino sketch can link or host; use 32_29_atomvm.
+- Bend: not supported: Bend 2 emits one hosted C file (pthread, mmap, sockets; 64-bit terms) with no bare-metal target, so it cannot run on an Arduino core; Bend lives in 32_31_bend.
 
 ## Configuration and environment variables
 
