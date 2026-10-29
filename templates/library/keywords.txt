@@ -1,0 +1,4 @@
+@NAME@	KEYWORD1
+add	KEYWORD2
+average	KEYWORD2
+reset	KEYWORD2

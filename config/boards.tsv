@@ -1,0 +1,13 @@
+# 32_13_arduino: owned boards -> FQBN (tab separated). `./arduino-box plan <board> <sketch>` prints
+# the upload commands; nothing here uploads.
+# board	fqbn	upload	notes
+nano	arduino:avr:nano	serial	ATmega328P; clones with the old bootloader: arduino:avr:nano:cpu=atmega328old
+esp32s3	esp32:esp32:esp32s3	serial	ESP32-S3-DevKitC-1; use the UART port (CP210x/CH343); hold BOOT+tap RST if auto-reset fails
+pico	rp2040:rp2040:rpipico	uf2	Raspberry Pi Pico; hold BOOTSEL while plugging in -> RPI-RP2 drive, or upload via serial port
+blackpill	STMicroelectronics:stm32:GenF4:pnum=BLACKPILL_F411CE	dfu	STM32F411CE BlackPill; BOOT0 + reset -> DFU 0483:df11; arduino-cli upload needs STM32CubeProgrammer (proprietary, not bundled)
+esp32c3	esp32:esp32:esp32c3	serial	ESP32-C3 (RISC-V) SuperMini/DevKitM; native USB-Serial/JTAG on most boards: CDCOnBoot=cdc for Serial over USB
+pico2	rp2040:rp2040:rpipico2	uf2	Raspberry Pi Pico 2 (RP2350, Cortex-M33); BOOTSEL -> RP2350 drive
+nicenano	adafruit:nrf52:pca10056	nrfutil	nice!nano / Pro Micro nRF52840 (Adafruit nRF52 bootloader); pca10056 variant: pin N = P0.N, P1.x = 32+x; double-tap reset -> NICENANO drive
+weact_g431	STMicroelectronics:stm32:GenG4:pnum=GENERIC_G431CBUX	dfu	WeAct STM32G431CBU6 CoreBoard; BOOT0 + reset -> DFU 0483:df11
+weact_h562	STMicroelectronics:stm32:GenH5:pnum=WEACT_H562RG	dfu	WeAct STM32H562RGT6; BOOT0 + reset -> DFU 0483:df11
+weact_h743	STMicroelectronics:stm32:GenH7:pnum=GENERIC_H743VITX	dfu	WeAct MiniSTM32H743VIT6; BOOT0 + reset -> DFU 0483:df11

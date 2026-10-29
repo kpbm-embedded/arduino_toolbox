@@ -1,0 +1,7 @@
+# 32_13_arduino pinned libraries (tab separated). Installed by ./arduino-box install into user/libraries
+# (arduino-cli lib install <name>@<version>; arduino-cli checks size and SHA-256 from the signed
+# library_index.json). Checked 2026-10-29 (newest release of each). Used by the examples/templates named.
+# name	version	used_by
+ArduinoJson	7.4.3	examples/json_config, examples/host_unit_test, templates/wifi_esp32
+Bounce2	2.71.0	examples/usb_hid_rp2040, templates/usb_hid_rp2040
+Adafruit NeoPixel	1.15.5	examples/neopixel_status

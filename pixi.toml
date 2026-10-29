@@ -1,0 +1,25 @@
+# 32_13_arduino pixi env (managed by ./arduino-box, see README.md). conda-forge + PyPI, pinned by
+# pixi.lock; env in ./.pixi, package caches in ./cache. arduino-cli and the cores bring their own
+# cross toolchains; this env only adds what the cores and examples need from the host side:
+#   g++/clang++     host unit tests of sketch logic (examples/host_unit_test, templates/host_tested)
+#   adafruit-nrfutil  called by the adafruit:nrf52 core after every nRF52840 compile (DFU .zip)
+#   pyelftools      lib/elf_check.py: sections, symbols and architecture of the built .elf files
+[workspace]
+name = "arduino_box"
+channels = ["conda-forge"]
+platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64"]
+
+[dependencies]
+python = "3.12.*"
+pip = "*"
+make = "4.*"
+
+[target.linux.dependencies]
+gxx = "14.*"
+
+[target.osx.dependencies]
+clangxx = "19.*"
+
+[pypi-dependencies]
+adafruit-nrfutil = "==0.5.3.post16"
+pyelftools = "==0.33"

@@ -1,0 +1,5 @@
+# board	flash_bytes	ram_bytes	(budgets for size_budget.ino; raise them deliberately, in review)
+nano	6000	600
+blackpill	32000	4000
+esp32c3	360000	20000
+pico	90000	16000

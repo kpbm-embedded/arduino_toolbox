@@ -1,0 +1,3 @@
+# Arduino CLI sketch project file: default board for `arduino-cli compile` without --fqbn.
+# ./arduino-box compile <dir> <board> always passes --fqbn explicitly.
+default_fqbn: arduino:avr:nano

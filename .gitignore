@@ -1,0 +1,20 @@
+# arduino-box: only sources go into git. Everything below is downloaded, unpacked or produced again by
+# ./arduino-box bootstrap | install | examples test (pins: config/pins.tsv, config/cores.tsv,
+# config/libraries.tsv, pixi.toml + pixi.lock, pixi sha256 in arduino-box).
+/.bin/
+/.pixi/
+/cache/
+/install/
+/native/
+/build/
+/log/
+/user/
+/config/local.env
+/config/arduino-cli.yaml
+*.tar.zst
+*.tar.gz
+*.tgz
+__pycache__/
+*.pyc
+# build output when arduino-cli is run by hand inside a sketch folder, host test output
+build-host/

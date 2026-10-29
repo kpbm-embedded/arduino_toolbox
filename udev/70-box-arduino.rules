@@ -1,0 +1,16 @@
+# 70-box-arduino.rules (32_13_arduino): user access to the boards this ID builds for (uaccess = the logged-in
+# user; no group change needed). Install (by hand, needs root; see README "udev and groups"):
+#   sudo install -m 644 udev/70-box-arduino.rules /etc/udev/rules.d/
+#   sudo udevadm control --reload && sudo udevadm trigger
+# Arduino Nano clones: CH340/CH341 and FT232R USB-UART bridges; genuine Arduino boards
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", TAG+="uaccess"
+# ESP32-S3-DevKitC-1: CP210x / CH343 UART bridge and the native USB-Serial/JTAG (303a:1001)
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="55d3", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", TAG+="uaccess"
+# Raspberry Pi Pico: BOOTSEL (2e8a:0003, picotool) and USB CDC of a running sketch
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="2e8a", TAG+="uaccess"
+# BlackPill STM32F411: ROM DFU bootloader (BOOT0 + reset)
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="df11", TAG+="uaccess"

@@ -1,0 +1,50 @@
+id = "32_13"
+name = "arduino"
+kind = "tool"
+status = "active"
+tags = ["embedded"]
+
+[backup]
+tier = "critical"
+
+[tool]
+name = "arduino"
+launcher = "arduino-box"
+aliases = ["arduino-box"]
+env_var = "BOX_ARDUINO"
+env_path = "."
+native = "native/native.zsh"
+native_provides = ["arduino-cli"]
+native_off_compat = ["ARDUINO_BOX_NATIVE_OFF"]
+network = ["bootstrap", "install", "update"]
+
+[scripts.arduino-box]
+schema = 1
+kind = "launcher"
+path = "arduino-box"
+summary = "self-contained Arduino CLI (official static binary) with pinned AVR, ESP32, RP2040, STM32 and nRF52 cores and libraries."
+interpreter = "sh"
+commands = ["help", "where", "bootstrap", "install", "update", "clean", "status", "doctor", "shell", "run", "test", "new", "examples", "native", "relocate", "pack", "cores", "boards", "compile", "list", "plan", "cli", "libs", "elf"]
+flags = ["--all", "--check", "--dir", "--dry-run", "--env", "--force", "--help", "--no-demos", "--out", "--print", "--with-cache", "--yes"]
+reads = { global = ["BOXT_DRY_RUN"] }
+dry_run_flag = "--dry-run"
+apply_flag = { clean = "--yes" }
+scope = "global"
+
+[scripts."test_dry_run.sh"]
+schema = 1
+kind = "test"
+path = "tests/test_dry_run.sh"
+summary = "Every arduino-box command in --dry-run mode (no downloads, compiles, moves or uploads), help and exit codes"
+interpreter = "bash"
+depends = { scripts = ["arduino-box"] }
+test = ["tests/test_dry_run.sh"]
+
+[scripts."test_smoke.sh"]
+schema = 1
+kind = "test"
+path = "tests/test_smoke.sh"
+summary = "Smoke test of the installed arduino-box: arduino-cli runs with this folder's directories"
+interpreter = "bash"
+depends = { scripts = ["arduino-box"] }
+test = ["tests/test_smoke.sh"]

@@ -1,0 +1,3 @@
+# Arduino CLI sketch project file: default board for a plain `arduino-cli compile`.
+# ./arduino-box compile <dir> <board> always passes --fqbn explicitly.
+default_fqbn: rp2040:rp2040:rpipico2

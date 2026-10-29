@@ -1,0 +1,9 @@
+# 32_13_arduino pinned board cores (tab separated). Installed by ./arduino-box install
+# (arduino-cli core install <core>@<version>); the archives stay in cache/arduino-downloads.
+# Checked 2026-10-25 (newest stable release of each core).
+# core	version	index	upstream
+arduino:avr	1.8.8	builtin	arduino/ArduinoCore-avr
+esp32:esp32	3.3.12	https://espressif.github.io/arduino-esp32/package_esp32_index.json	espressif/arduino-esp32
+rp2040:rp2040	6.3.1	https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json	earlephilhower/arduino-pico
+STMicroelectronics:stm32	3.0.0	https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json	stm32duino/Arduino_Core_STM32
+adafruit:nrf52	1.7.0	https://adafruit.github.io/arduino-board-index/package_adafruit_index.json	adafruit/Adafruit_nRF52_Arduino
