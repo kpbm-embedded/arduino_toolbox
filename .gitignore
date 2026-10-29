@@ -3,7 +3,7 @@
 # config/libraries.tsv, pixi.toml + pixi.lock, pixi sha256 in arduino-box).
 /.bin/
 /.pixi/
-/cache/
+/cache
 /install/
 /native/
 /build/
